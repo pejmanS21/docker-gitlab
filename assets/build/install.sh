@@ -251,6 +251,14 @@ echo "UseDNS no" >> /etc/ssh/sshd_config
 # move supervisord.log file to ${GITLAB_LOG_DIR}/supervisor/
 sed -i "s|^[#]*logfile=.*|logfile=${GITLAB_LOG_DIR}/supervisor/supervisord.log ;|" /etc/supervisor/supervisord.conf
 
+# silence "CRIT Server 'unix_http_server' running without any HTTP authentication checking" message
+# https://github.com/Supervisor/supervisor/issues/717
+sed -i '/\.sock/a password=dummy' /etc/supervisor/supervisord.conf
+sed -i '/\.sock/a username=dummy' /etc/supervisor/supervisord.conf
+# prevent confusing warning "CRIT Supervisor running as root" by clarify run as root
+#   user not defined in supervisord.conf by default, so just append it after [supervisord] block
+sed -i "/\[supervisord\]/a user=root" /etc/supervisor/supervisord.conf
+
 # move nginx logs to ${GITLAB_LOG_DIR}/nginx
 sed -i \
   -e "s|access_log /var/log/nginx/access.log;|access_log ${GITLAB_LOG_DIR}/nginx/access.log;|" \
@@ -349,8 +357,6 @@ command=bundle exec sidekiq -c {{SIDEKIQ_CONCURRENCY}}
   -C ${GITLAB_INSTALL_DIR}/config/sidekiq_queues.yml
   -e ${RAILS_ENV}
   -t {{SIDEKIQ_SHUTDOWN_TIMEOUT}}
-  -P ${GITLAB_INSTALL_DIR}/tmp/pids/sidekiq.pid
-  -L ${GITLAB_INSTALL_DIR}/log/sidekiq.log
 user=git
 autostart=true
 autorestart=true
