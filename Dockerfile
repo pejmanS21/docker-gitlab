@@ -1,14 +1,14 @@
-FROM ubuntu:focal-20230308
+FROM ubuntu:focal-20230605
 
-ARG VERSION=15.10.2
+ARG VERSION=16.1.1
 
 ENV GITLAB_VERSION=${VERSION} \
-    RUBY_VERSION=2.7.8 \
-    RUBY_SOURCE_SHA256SUM="c2dab63cbc8f2a05526108ad419efa63a67ed4074dbbcf9fc2b1ca664cb45ba0" \
-    GOLANG_VERSION=1.20.3 \
-    GITLAB_SHELL_VERSION=14.18.0 \
-    GITLAB_PAGES_VERSION=15.10.2 \
-    GITALY_SERVER_VERSION=15.10.2 \
+    RUBY_VERSION=3.0.6 \
+    RUBY_SOURCE_SHA256SUM="6e6cbd490030d7910c0ff20edefab4294dfcd1046f0f8f47f78b597987ac683e" \
+    GOLANG_VERSION=1.20.5 \
+    GITLAB_SHELL_VERSION=14.23.0 \
+    GITLAB_PAGES_VERSION=16.1.1 \
+    GITALY_SERVER_VERSION=16.1.1 \
     GITLAB_USER="git" \
     GITLAB_HOME="/home/git" \
     GITLAB_LOG_DIR="/var/log/gitlab" \
@@ -44,7 +44,8 @@ RUN set -ex && \
  && apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
       sudo supervisor logrotate locales curl \
-      nginx openssh-server postgresql-client-12 postgresql-contrib-12 redis-tools \
+      nginx openssh-server postgresql-contrib redis-tools \
+      postgresql-client-13 postgresql-client-14 postgresql-client-15 \
       python3 python3-docutils nodejs yarn gettext-base graphicsmagick \
       libpq5 zlib1g libyaml-0-2 libssl1.1 \
       libgdbm6 libreadline8 libncurses5 libffi7 \
